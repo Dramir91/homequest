@@ -34,6 +34,8 @@ public class GameView implements Screen {
         if (key.getKeyCode() == KeyEvent.VK_LEFT)
             x--;
 
+        logWindow.respondToUserInput(key);
+
         player.tryMove(location, x, y);
         location.tick();
         return this;

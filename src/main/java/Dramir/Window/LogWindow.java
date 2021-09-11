@@ -4,11 +4,14 @@ import Dramir.App.ApplicationMain;
 import Dramir.Game.GameState;
 import asciiPanel.AsciiPanel;
 
+import java.awt.event.KeyEvent;
+import java.security.Key;
 import java.util.ArrayList;
 
 public class LogWindow extends Window {
 
     ArrayList<ArrayList<String>> log = new ArrayList<>();
+    int currentPage = 0;
 
 
     public LogWindow(int x, int y, int width, int height) {
@@ -20,23 +23,14 @@ public class LogWindow extends Window {
 
     public void draw(AsciiPanel terminal) {
         drawBorder(terminal);
-        int lastIndex = log.size() - 1;
         int lineY = 0;
-        for (var line : log.get(lastIndex)) {
+        for (var line : log.get(currentPage)) {
             terminal.write(line, deltaX(0), deltaY(lineY));
             lineY++;
         }
 
     }
 
-    //a dvsd vkoasdpv aoskvakdp oakdfopv pdfkgop dfsoi poijriportjniob msrotibm soriptmbio psrmtb ioprtsm biosrmbto ipsrm
-    //
-    //[                                     ]
-    //
-    //[a dvsd vkoasdpv aoskvakdp oakdfopv]
-    //[pdfkgop dfsoi poijriportjniob]
-    //[msrotibm soriptmbio psrmtb ioprtsm]
-    //[biosrmbto ipsrm]
 
     public ArrayList<String> partitionText(String text) {
         int maxWidth = width - (borderOffset * 2);
@@ -61,38 +55,28 @@ public class LogWindow extends Window {
         var page = log.get(log.size()-1);
         for(var line : text) {
             if (page.size()==maxHeight) {
+                if (currentPage == log.size() - 1)
+                    currentPage++;
                 page = new ArrayList<>();
                 log.add(page);
             }
             page.add(line);
         }
-//
-//      if (text.size() > maxHeight) {
-//            log.add(page);
-//        }
-//        if (text.size() < maxHeight) {
-//            page.addAll(text);
-//        }
-
-        /*
-
-        [ 'pierwszy tekst',
-
-        ]
-        -> addEvent / addToLog -> write()
-        [ 'pierwszy tekst',
-           'you hit a wal'
-        ] -> renderPage();
-
-        1. interaction('wall')
-            -> dodajemy element do loga || zmienic statsy bohatera || zakoncz gre // bo wiemy ze uderzylismy w sciane
-                -> writeLog -> moze dodac sie do pierwszej strony albo do drugiej
-            -> odswiezyc pole gry // a to pole gry juz ma policzonego loga odpowiednio
-         */
-
-
     }
 
+    public void changePage(int offset) {
+        int nextPage = currentPage + offset;
+        if (nextPage >= 0 && nextPage <= log.size()-1) {
+            currentPage = nextPage;
+        }
+    }
+
+    public void respondToUserInput(KeyEvent key) {
+        if (key.getKeyCode() == KeyEvent.VK_PAGE_UP)
+            changePage(-1);
+        if (key.getKeyCode() == KeyEvent.VK_PAGE_DOWN)
+            changePage(1);
+    }
 }
 
 
