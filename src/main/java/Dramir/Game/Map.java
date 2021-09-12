@@ -77,7 +77,7 @@ public class Map extends Window {
             }
         }
         for (var npc : npcs) {
-            terminal.write("X", deltaX(npc.x), deltaY(npc.y));
+            terminal.write("D", deltaX(npc.x), deltaY(npc.y));
         }
         terminal.write("@", deltaX(GameState.Player.x), deltaY(GameState.Player.y));
     }
