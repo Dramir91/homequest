@@ -4,7 +4,7 @@ import java.util.Random;
 import java.util.function.Consumer;
 
 public class NPC extends Character {
-    Consumer<Map> routine = this::moveRandomly;
+    Consumer<Map> routine = this::moveRandomlyRoutine;
     int tickCounter = 0;
 
     public NPC(int x, int y) {
@@ -18,29 +18,31 @@ public class NPC extends Character {
         tickCounter++;
     }
 
-    private void moveRandomly(Map map) {
+    private void moveRandomlyRoutine(Map map) {
         Random rand = new Random(); // tworzy generator liczb losowych
 
         int nextX = x + rand.nextInt(3) - 1; // przesuwa o -1 ... 1
         int nextY = y + rand.nextInt(3) - 1; // przesuwa o -1 ... 1
 
         tryMove(map, nextX, nextY);
-        if (playerIsNear())
-            routine = this::attack;
+        if (playerIsNear(2))
+            routine = this::attackRoutine;
     }
 
-    private boolean playerIsNear() {
+    private boolean playerIsNear(int distance) {
         int playerX = GameState.Player.x;
         int playerY = GameState.Player.y;
         int deltaX = Math.abs(playerX - x);
         int deltaY = Math.abs(playerY - y);
 
-        return deltaX <= 1 && deltaY <= 1;
+        return deltaX <= distance && deltaY <= distance;
     }
 
-    private void attack(Map map) {
-        if (playerIsNear())
+    private void attackRoutine(Map map) {
+        if (playerIsNear(1))
             GameState.LogWindow.write("npc hit u");
+        else if (!playerIsNear(3))
+            routine = this::moveRandomlyRoutine;
         else
             moveTowardsPlayer(map);
     }
